@@ -4,6 +4,8 @@ ___scope___.file("index.js", function(exports, require, module, __filename, __di
 
 'use strict';
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 var _react = require('react');
 
 var _react2 = _interopRequireDefault(_react);
@@ -12,27 +14,878 @@ var _reactDom = require('react-dom');
 
 var _reactDom2 = _interopRequireDefault(_reactDom);
 
+var _Tree = require('./components/Tree.react');
+
+var _Tree2 = _interopRequireDefault(_Tree);
+
 require('./style/index.css');
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-var MainElement = _react2.default.createClass({
-    displayName: 'MainElement',
-    render: function render() {
-        return _react2.default.DOM.div({ className: 'containerDiv' }, 'hello world!');
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var treeData = [{
+    id: 1,
+    label: 'label_1',
+    children: [{
+        id: 11,
+        label: 'label_1.1',
+        children: [{
+            id: 111,
+            label: 'label_1.1.1'
+        }]
+    }, {
+        id: 12,
+        label: 'label_1.2'
+    }]
+}, {
+    id: 2,
+    label: 'label_2',
+    children: [{
+        id: 21,
+        label: 'label_2.1'
+    }, {
+        id: 22,
+        label: 'label_2.2',
+        children: [{
+            id: 221,
+            label: 'label_2.2.1'
+        }, {
+            id: 222,
+            label: 'label_2.2.2'
+        }]
+    }, {
+        id: 23,
+        label: 'label_2.3'
+    }]
+}, {
+    id: 3,
+    label: 'label_3'
+}];
+
+var MainElement = function (_React$Component) {
+    _inherits(MainElement, _React$Component);
+
+    function MainElement() {
+        _classCallCheck(this, MainElement);
+
+        return _possibleConstructorReturn(this, (MainElement.__proto__ || Object.getPrototypeOf(MainElement)).apply(this, arguments));
     }
-});
 
-// import './style/index.css';
+    _createClass(MainElement, [{
+        key: 'render',
+        value: function render() {
+            return _react2.default.DOM.div({ className: 'containerDiv' }, _react2.default.createElement(_Tree2.default, { data: treeData }));
+        }
+    }]);
 
+    return MainElement;
+}(_react2.default.Component);
 
 _reactDom2.default.render(_react2.default.createElement(MainElement), document.getElementById('rootElement'));
+});
+___scope___.file("components/Tree.react.js", function(exports, require, module, __filename, __dirname){
+
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+var _Icon = require('Icon.react');
+
+var _Icon2 = _interopRequireDefault(_Icon);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var Tree = function (_React$Component) {
+    _inherits(Tree, _React$Component);
+
+    function Tree(props) {
+        _classCallCheck(this, Tree);
+
+        var _this = _possibleConstructorReturn(this, (Tree.__proto__ || Object.getPrototypeOf(Tree)).call(this, props));
+
+        _this.state = {
+            treeData: []
+        };
+        return _this;
+    }
+
+    _createClass(Tree, [{
+        key: 'componentWillMount',
+        value: function componentWillMount() {
+            this.initTreeData();
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            var _this2 = this;
+
+            if (!this.state.treeData.length) {
+                return null;
+            }
+            // console.log('///////////////  RENDER  //////////////////', this.state.treeData);
+            return _react2.default.DOM.div({
+                className: 'reactTree'
+            }, this.state.treeData.filter(function (node) {
+                return !node.parentId;
+            }).map(function (node) {
+                return _this2.createTreeNode(node);
+            }));
+        }
+    }, {
+        key: 'initTreeData',
+        value: function initTreeData() {
+            if (!this.props.data) {
+                //TODO REFACTOR - handle multiple data structures
+                return null;
+            }
+            var treeData = [];
+
+            (function traverseData(data, parent) {
+                data.forEach(function (nodeData, index) {
+                    var container = !!(nodeData.children && nodeData.children.length);
+                    var treeNode = {
+                        id: parent ? parent.id + '/' + index : '' + index,
+                        parentId: parent ? parent.id : null,
+                        label: nodeData.label,
+                        container: container
+                    };
+
+                    treeData.push(treeNode);
+
+                    if (container) {
+                        traverseData(nodeData.children, treeNode);
+                    }
+                });
+            })(this.props.data, null);
+
+            this.setState({ treeData: treeData });
+        }
+    }, {
+        key: 'createTreeNode',
+        value: function createTreeNode(aNode) {
+            var _this3 = this;
+
+            var aParentList = this.getParentList(aNode);
+            var aParent = aParentList.length ? aParentList[0] : null;
+            var aChildren = this.getChildren(aNode);
+            var aLevel = aParentList.length;
+
+            if (aParent && !aParentList.every(function (parent) {
+                return parent.expanded;
+            })) {
+                return null;
+            }
+
+            var iconId = '';
+            if (aNode.container) {
+                iconId = aNode.expanded ? 'collapse' : 'expand';
+            }
+            var fieldArguments = {
+                indent: ['span', { className: 'indent', style: { width: aLevel * this.props.indentSize + 'px' } }],
+                icon: [_Icon2.default, { className: iconId ? 'expandButton' : '', icon: iconId }],
+                label: ['label', {}, aNode.label],
+                spacer: ['span', { className: 'treeSpacer' }]
+            };
+            var aFields = this.props.columns.map(function (col) {
+                var args = fieldArguments[col];
+                args[1].key = aNode.id + col;
+                return _react2.default.createElement.apply(_react2.default, _toConsumableArray(args));
+            });
+
+            return _react2.default.DOM.div({
+                id: aNode.id,
+                className: 'treeElement',
+                key: aNode.id,
+                draggable: this.props.dranAndDrop || false,
+                onClick: function onClick(e) {
+                    e.stopPropagation();
+                    if (e.target.classList.contains('expandButton')) {
+                        _this3.toggle(aNode);
+                    }
+                },
+                onDoubleClick: function onDoubleClick(e) {
+                    e.stopPropagation();
+                    if (aNode.container) {
+                        _this3.toggle(aNode);
+                    }
+                },
+                onDragStart: function onDragStart(e) {
+                    e.stopPropagation();
+                    e.dataTransfer.setData('draggedNodeId', aNode.id);
+                },
+                onDragOver: function onDragOver(e) {
+                    //TODO placeholder
+                    var draggedNodeId = e.dataTransfer.getData('draggedNodeId');
+                    //TODO if not child of itself
+                    // const draggedData = e.dataTransfer.getData('item');
+                    var parentIds = aParentList.map(function (node) {
+                        return node.parentId;
+                    }); //TODO target
+                    parentIds.indexOf(aNode.id);
+
+                    if (e.target.parentNode.classList.contains('treeRow')) {
+                        e.preventDefault();
+                    }
+                },
+                onDrop: function onDrop(e) {
+                    e.stopPropagation();
+                    var droppedNode = _this3.getNodeById(e.dataTransfer.getData('draggedNodeId'));
+                    var dropTarget = _this3.getNodeById(e.currentTarget.id);
+
+                    //TODO sort;
+
+                    if (dropTarget.container) {
+                        _this3.updateParent(droppedNode, dropTarget.id);
+                    } else {
+                        _this3.updateParent(droppedNode, dropTarget.parentId);
+                    }
+                },
+                onDragEnd: function onDragEnd(e) {
+                    console.log('dragEnd');
+                    //TODO remove original
+                }
+            }, _react2.default.DOM.div({ className: 'treeRow' }, aFields), aChildren && _react2.default.DOM.div({ className: 'treeChildren' },
+            // aNode.children.map((child) => this.createTreeNode(child))
+            aChildren.map(function (child) {
+                return _this3.createTreeNode(child);
+            })));
+            //listeners - onClick, onEnter -> select | onDoubleClick -> collapse |
+        }
+    }, {
+        key: 'getNodeById',
+        value: function getNodeById(id) {
+            return this.state.treeData.find(function (data) {
+                return id === data.id;
+            });
+        }
+    }, {
+        key: 'getParentList',
+        value: function getParentList(aNode) {
+            var that = this;
+            var parentList = [];
+            var parent = void 0;
+
+            function findParent(id) {
+                parent = that.getNodeById(id);
+                if (parent) {
+                    parentList.push(parent);
+                    findParent(parent.parentId);
+                }
+            }
+
+            if (aNode.parentId) {
+                findParent(aNode.parentId);
+            }
+
+            return parentList;
+        }
+    }, {
+        key: 'getChildren',
+        value: function getChildren(aNode) {
+            return this.state.treeData.filter(function (data) {
+                return data.parentId === aNode.id;
+            });
+        }
+    }, {
+        key: 'toggle',
+        value: function toggle(aNode) {
+            //TODO fix
+            this.setState({
+                treeData: this.state.treeData.map(function (data) {
+                    if (aNode.id === data.id) {
+                        data.expanded = data.expanded === undefined ? true : data.expanded === false;
+                    }
+                    return data;
+                })
+            });
+        }
+    }, {
+        key: 'updateParent',
+        value: function updateParent(aNode, parentId) {
+            this.setState({
+                treeData: this.state.treeData.map(function (data) {
+                    if (aNode.id === data.id) {
+                        data.parentId = parentId;
+                    }
+                    return data;
+                })
+            });
+        }
+    }]);
+
+    return Tree;
+}(_react2.default.Component);
+
+Tree.defaultProps = {
+    columns: ['indent', 'icon', 'label', 'spacer'],
+    indentSize: 16
+
+    // const Tree = React.createClass({
+    //
+    //     expand: function() {},
+    //     expandAll: function() {},
+    //     collapse: function() { //collapse children & -> if expanded
+    //     },
+    //     collapseAll: function() {},
+    //     toggleAll: function() {},
+    //     insertNode: function() {},
+    //     selectNode: function() {},
+    //     removeNode: function() {}
+    // });
+
+};exports.default = Tree;
+});
+___scope___.file("components/Icon.react.js", function(exports, require, module, __filename, __dirname){
+
+'use strict';
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = require('react');
+
+var _react2 = _interopRequireDefault(_react);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var icons = {
+    close: '\n        M672 256l-160 160-160-160-96 96 160 160-160 160 96 96 160-160 160 160 96-96-160-160 160-160z\n        M512 0c-282.77 0-512 229.23-512 512s229.23 512 512 512 512-229.23 512-512-229.23-512-512-512z\n        M512 928c-229.75 0-416-186.25-416-416s186.25-416 416-416 416 186.25 416 416-186.25 416-416 416z\n    ',
+    expand: 'M366 698l196-196-196-196 60-60 256 256-256 256z',
+    collapse: 'M708 366l60 60-256 256-256-256 60-60 196 196z'
+};
+
+var Icon = function (_React$Component) {
+    _inherits(Icon, _React$Component);
+
+    function Icon() {
+        _classCallCheck(this, Icon);
+
+        return _possibleConstructorReturn(this, (Icon.__proto__ || Object.getPrototypeOf(Icon)).apply(this, arguments));
+    }
+
+    _createClass(Icon, [{
+        key: 'render',
+        value: function render() {
+            var props = this.props;
+            var path = props.icon ? icons[props.icon] : '';
+            var style = {
+                svg: {
+                    display: 'inline-block',
+                    verticalAlign: 'middle'
+                },
+                path: {
+                    fill: props.color
+                }
+            };
+            var svgProps = {
+                style: style.svg,
+                width: props.size + 'px',
+                height: props.size + 'px',
+                viewBox: '0 0 1024 1024'
+            };
+            if (props.className) {
+                svgProps.className = props.className;
+            }
+            if (props.id) {
+                svgProps.id = props.id;
+            }
+            return _react2.default.DOM.svg(svgProps, _react2.default.DOM.path({ style: style.path, d: path }));
+        }
+    }]);
+
+    return Icon;
+}(_react2.default.Component);
+
+Icon.defaultProps = {
+    size: 16
+};
+
+exports.default = Icon;
 });
 ___scope___.file("style/index.css", function(exports, require, module, __filename, __dirname){
 
 
-require("fuse-box-css")("style/index.css", "body {\n    background: grey;\n}\n")
+require("fuse-box-css")("style/index.css", "\nbody {\n    background: #777;\n}\n\n.indent {\n    display: inline-block;\n}\n\n.expandButton {\n    cursor: pointer;\n}\n")
 });
+});
+FuseBox.pkg("fusebox-hot-reload", {}, function(___scope___){
+___scope___.file("index.js", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+/**
+ * @module listens to `source-changed` socket events and actions hot reload
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+var Client = require('fusebox-websocket').SocketClient;
+exports.connect = function (port, uri) {
+    if (FuseBox.isServer) {
+        return;
+    }
+    port = port || window.location.port;
+    var client = new Client({
+        port: port,
+        uri: uri,
+    });
+    client.connect();
+    client.on('source-changed', function (data) {
+        console.info("%cupdate \"" + data.path + "\"", 'color: #237abe');
+        /**
+         * If a plugin handles this request then we don't have to do anything
+         **/
+        for (var index = 0; index < FuseBox.plugins.length; index++) {
+            var plugin = FuseBox.plugins[index];
+            if (plugin.hmrUpdate && plugin.hmrUpdate(data)) {
+                return;
+            }
+        }
+        if (data.type === 'js') {
+            FuseBox.flush();
+            FuseBox.dynamic(data.path, data.content);
+            if (FuseBox.mainFile) {
+                try {
+                    FuseBox.import(FuseBox.mainFile);
+                }
+                catch (e) {
+                    if (typeof e === 'string') {
+                        if (/not found/.test(e)) {
+                            return window.location.reload();
+                        }
+                    }
+                    console.error(e);
+                }
+            }
+        }
+        if (data.type === 'css' && __fsbx_css) {
+            __fsbx_css(data.path, data.content);
+        }
+    });
+    client.on('error', function (error) {
+        console.log(error);
+    });
+};
+
+});
+return ___scope___.entry = "index.js";
+});
+FuseBox.pkg("fusebox-websocket", {}, function(___scope___){
+___scope___.file("index.js", function(exports, require, module, __filename, __dirname){
+
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var events = require('events');
+var SocketClient = (function () {
+    function SocketClient(opts) {
+        opts = opts || {};
+        var port = opts.port || window.location.port;
+        var protocol = location.protocol === 'https:' ? 'wss://' : 'ws://';
+        var domain = location.hostname || 'localhost';
+        this.url = opts.host || "" + protocol + domain + ":" + port;
+        if (opts.uri) {
+            this.url = opts.uri;
+        }
+        this.authSent = false;
+        this.emitter = new events.EventEmitter();
+    }
+    SocketClient.prototype.reconnect = function (fn) {
+        var _this = this;
+        setTimeout(function () {
+            _this.emitter.emit('reconnect', { message: 'Trying to reconnect' });
+            _this.connect(fn);
+        }, 5000);
+    };
+    SocketClient.prototype.on = function (event, fn) {
+        this.emitter.on(event, fn);
+    };
+    SocketClient.prototype.connect = function (fn) {
+        var _this = this;
+        console.log('%cConnecting to fusebox HMR at ' + this.url, 'color: #237abe');
+        setTimeout(function () {
+            _this.client = new WebSocket(_this.url);
+            _this.bindEvents(fn);
+        }, 0);
+    };
+    SocketClient.prototype.close = function () {
+        this.client.close();
+    };
+    SocketClient.prototype.send = function (eventName, data) {
+        if (this.client.readyState === 1) {
+            this.client.send(JSON.stringify({ event: eventName, data: data || {} }));
+        }
+    };
+    SocketClient.prototype.error = function (data) {
+        this.emitter.emit('error', data);
+    };
+    /** Wires up the socket client messages to be emitted on our event emitter */
+    SocketClient.prototype.bindEvents = function (fn) {
+        var _this = this;
+        this.client.onopen = function (event) {
+            console.log('%cConnected', 'color: #237abe');
+            if (fn) {
+                fn(_this);
+            }
+        };
+        this.client.onerror = function (event) {
+            _this.error({ reason: event.reason, message: 'Socket error' });
+        };
+        this.client.onclose = function (event) {
+            _this.emitter.emit('close', { message: 'Socket closed' });
+            if (event.code !== 1011) {
+                _this.reconnect(fn);
+            }
+        };
+        this.client.onmessage = function (event) {
+            var data = event.data;
+            if (data) {
+                var item = JSON.parse(data);
+                _this.emitter.emit(item.type, item.data);
+                _this.emitter.emit('*', item);
+            }
+        };
+    };
+    return SocketClient;
+}());
+exports.SocketClient = SocketClient;
+
+});
+return ___scope___.entry = "index.js";
+});
+FuseBox.pkg("events", {}, function(___scope___){
+___scope___.file("index.js", function(exports, require, module, __filename, __dirname){
+
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+if (FuseBox.isServer) {
+    module.exports = global.require("events");
+} else {
+    function EventEmitter() {
+        this._events = this._events || {};
+        this._maxListeners = this._maxListeners || undefined;
+    }
+    module.exports = EventEmitter;
+
+    // Backwards-compat with node 0.10.x
+    EventEmitter.EventEmitter = EventEmitter;
+
+    EventEmitter.prototype._events = undefined;
+    EventEmitter.prototype._maxListeners = undefined;
+
+    // By default EventEmitters will print a warning if more than 10 listeners are
+    // added to it. This is a useful default which helps finding memory leaks.
+    EventEmitter.defaultMaxListeners = 10;
+
+    // Obviously not all Emitters should be limited to 10. This function allows
+    // that to be increased. Set to zero for unlimited.
+    EventEmitter.prototype.setMaxListeners = function(n) {
+        if (!isNumber(n) || n < 0 || isNaN(n))
+            throw TypeError("n must be a positive number");
+        this._maxListeners = n;
+        return this;
+    };
+
+    EventEmitter.prototype.emit = function(type) {
+        var er, handler, len, args, i, listeners;
+
+        if (!this._events)
+            this._events = {};
+
+        // If there is no 'error' event listener then throw.
+        if (type === "error") {
+            if (!this._events.error ||
+                (isObject(this._events.error) && !this._events.error.length)) {
+                er = arguments[1];
+                if (er instanceof Error) {
+                    throw er; // Unhandled 'error' event
+                }
+                throw TypeError("Uncaught, unspecified \"error\" event.");
+            }
+        }
+
+        handler = this._events[type];
+
+        if (isUndefined(handler))
+            return false;
+
+        if (isFunction(handler)) {
+            switch (arguments.length) {
+                // fast cases
+                case 1:
+                    handler.call(this);
+                    break;
+                case 2:
+                    handler.call(this, arguments[1]);
+                    break;
+                case 3:
+                    handler.call(this, arguments[1], arguments[2]);
+                    break;
+                    // slower
+                default:
+                    args = Array.prototype.slice.call(arguments, 1);
+                    handler.apply(this, args);
+            }
+        } else if (isObject(handler)) {
+            args = Array.prototype.slice.call(arguments, 1);
+            listeners = handler.slice();
+            len = listeners.length;
+            for (i = 0; i < len; i++)
+                listeners[i].apply(this, args);
+        }
+
+        return true;
+    };
+
+    EventEmitter.prototype.addListener = function(type, listener) {
+        var m;
+
+        if (!isFunction(listener))
+            throw TypeError("listener must be a function");
+
+        if (!this._events)
+            this._events = {};
+
+        // To avoid recursion in the case that type === "newListener"! Before
+        // adding it to the listeners, first emit "newListener".
+        if (this._events.newListener)
+            this.emit("newListener", type,
+                isFunction(listener.listener) ?
+                listener.listener : listener);
+
+        if (!this._events[type])
+        // Optimize the case of one listener. Don't need the extra array object.
+            this._events[type] = listener;
+        else if (isObject(this._events[type]))
+        // If we've already got an array, just append.
+            this._events[type].push(listener);
+        else
+        // Adding the second element, need to change to array.
+            this._events[type] = [this._events[type], listener];
+
+        // Check for listener leak
+        if (isObject(this._events[type]) && !this._events[type].warned) {
+            if (!isUndefined(this._maxListeners)) {
+                m = this._maxListeners;
+            } else {
+                m = EventEmitter.defaultMaxListeners;
+            }
+
+            if (m && m > 0 && this._events[type].length > m) {
+                this._events[type].warned = true;
+                console.error("(node) warning: possible EventEmitter memory " +
+                    "leak detected. %d listeners added. " +
+                    "Use emitter.setMaxListeners() to increase limit.",
+                    this._events[type].length);
+                if (typeof console.trace === "function") {
+                    // not supported in IE 10
+                    console.trace();
+                }
+            }
+        }
+
+        return this;
+    };
+
+    EventEmitter.prototype.on = EventEmitter.prototype.addListener;
+
+    EventEmitter.prototype.once = function(type, listener) {
+        if (!isFunction(listener))
+            throw TypeError("listener must be a function");
+
+        var fired = false;
+
+        function g() {
+            this.removeListener(type, g);
+
+            if (!fired) {
+                fired = true;
+                listener.apply(this, arguments);
+            }
+        }
+
+        g.listener = listener;
+        this.on(type, g);
+
+        return this;
+    };
+
+    // emits a 'removeListener' event iff the listener was removed
+    EventEmitter.prototype.removeListener = function(type, listener) {
+        var list, position, length, i;
+
+        if (!isFunction(listener))
+            throw TypeError("listener must be a function");
+
+        if (!this._events || !this._events[type])
+            return this;
+
+        list = this._events[type];
+        length = list.length;
+        position = -1;
+
+        if (list === listener ||
+            (isFunction(list.listener) && list.listener === listener)) {
+            delete this._events[type];
+            if (this._events.removeListener)
+                this.emit("removeListener", type, listener);
+
+        } else if (isObject(list)) {
+            for (i = length; i-- > 0;) {
+                if (list[i] === listener ||
+                    (list[i].listener && list[i].listener === listener)) {
+                    position = i;
+                    break;
+                }
+            }
+
+            if (position < 0)
+                return this;
+
+            if (list.length === 1) {
+                list.length = 0;
+                delete this._events[type];
+            } else {
+                list.splice(position, 1);
+            }
+
+            if (this._events.removeListener)
+                this.emit("removeListener", type, listener);
+        }
+
+        return this;
+    };
+
+    EventEmitter.prototype.removeAllListeners = function(type) {
+        var key, listeners;
+
+        if (!this._events)
+            return this;
+
+        // not listening for removeListener, no need to emit
+        if (!this._events.removeListener) {
+            if (arguments.length === 0)
+                this._events = {};
+            else if (this._events[type])
+                delete this._events[type];
+            return this;
+        }
+
+        // emit removeListener for all listeners on all events
+        if (arguments.length === 0) {
+            for (key in this._events) {
+                if (key === "removeListener") continue;
+                this.removeAllListeners(key);
+            }
+            this.removeAllListeners("removeListener");
+            this._events = {};
+            return this;
+        }
+
+        listeners = this._events[type];
+
+        if (isFunction(listeners)) {
+            this.removeListener(type, listeners);
+        } else if (listeners) {
+            // LIFO order
+            while (listeners.length)
+                this.removeListener(type, listeners[listeners.length - 1]);
+        }
+        delete this._events[type];
+
+        return this;
+    };
+
+    EventEmitter.prototype.listeners = function(type) {
+        var ret;
+        if (!this._events || !this._events[type])
+            ret = [];
+        else if (isFunction(this._events[type]))
+            ret = [this._events[type]];
+        else
+            ret = this._events[type].slice();
+        return ret;
+    };
+
+    EventEmitter.prototype.listenerCount = function(type) {
+        if (this._events) {
+            var evlistener = this._events[type];
+
+            if (isFunction(evlistener))
+                return 1;
+            else if (evlistener)
+                return evlistener.length;
+        }
+        return 0;
+    };
+
+    EventEmitter.listenerCount = function(emitter, type) {
+        return emitter.listenerCount(type);
+    };
+
+    function isFunction(arg) {
+        return typeof arg === "function";
+    }
+
+    function isNumber(arg) {
+        return typeof arg === "number";
+    }
+
+    function isObject(arg) {
+        return typeof arg === "object" && arg !== null;
+    }
+
+    function isUndefined(arg) {
+        return arg === void 0;
+    }
+}
+
+});
+return ___scope___.entry = "index.js";
 });
 FuseBox.pkg("react", {}, function(___scope___){
 ___scope___.file("react.js", function(exports, require, module, __filename, __dirname){
@@ -21592,6 +22445,7 @@ module.exports = function(__filename, contents) {
 });
 return ___scope___.entry = "index.js";
 });
+FuseBox.import("fusebox-hot-reload").connect(4444, "")
 
 FuseBox.import("default/index.js");
 FuseBox.main("default/index.js");

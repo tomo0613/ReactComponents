@@ -1,29 +1,30 @@
 import React from 'react';
+import Icon from 'Icon.react';
 
-const Tree = React.createClass({
-    displayName: 'Tree',
-    getDefaultProps: function() {
-        return {
-            columns: ['indent', 'icon', 'label', 'spacer'],
-            indentSize: 16
-        };
-    },
-    getInitialState: function() {
-        return {treeData: []};
-    }, //componentWillReceiveProps: reInit
-    componentWillMount: function() {
+class Tree extends React.Component {
+    constructor(props) {
+        super(props);
+
+        this.state = {
+            treeData: []
+        }
+    }
+
+    componentWillMount() {
         this.initTreeData();
-    },
-    render: function() {
+    }
+
+    render() {
         if (!this.state.treeData.length) {
             return null;
         }
-        console.log('///////////////  RENDER  //////////////////', this.state.treeData);
+        // console.log('///////////////  RENDER  //////////////////', this.state.treeData);
         return React.DOM.div({
             className: 'reactTree'
         }, this.state.treeData.filter((node) => !node.parentId).map((node) => this.createTreeNode(node)));
-    },
-    initTreeData: function() {
+    }
+
+    initTreeData() {
         if (!this.props.data) {//TODO REFACTOR - handle multiple data structures
             return null;
         }
@@ -37,7 +38,6 @@ const Tree = React.createClass({
                     parentId: parent ? parent.id : null,
                     label: nodeData.label,
                     container: container
-                    // expanded: false
                 };
 
                 treeData.push(treeNode);
@@ -49,8 +49,9 @@ const Tree = React.createClass({
         })(this.props.data, null);
 
         this.setState({treeData: treeData});
-    },
-    createTreeNode: function(aNode) {
+    }
+
+    createTreeNode(aNode) {
         const aParentList = this.getParentList(aNode);
         const aParent = aParentList.length ? aParentList[0] : null;
         const aChildren = this.getChildren(aNode);
@@ -59,17 +60,14 @@ const Tree = React.createClass({
         if (aParent && !aParentList.every((parent) => parent.expanded)) {
             return null;
         }
-        const icon = {
-            id: '',
-            styleClass: 'iconPlaceholder'
-        };
+
+        let iconId = '';
         if (aNode.container) {
-            icon.id = aNode.expanded ? 'expand_more' : 'chevron_right';
-            icon.styleClass = 'expandButton material-icons';
+            iconId = aNode.expanded ? 'collapse' : 'expand';
         }
         const fieldArguments = {
-            indent: ['span', {style: {width: aLevel * this.props.indentSize + 'px'}}],
-            icon: ['i', {className: icon.styleClass}, icon.id],
+            indent: ['span', {className: 'indent', style: {width: aLevel * this.props.indentSize + 'px'}}],
+            icon: [Icon, {className: iconId ? 'expandButton' : '', icon: iconId}],
             label: ['label', {}, aNode.label],
             spacer: ['span', {className: 'treeSpacer'}]
         };
@@ -142,11 +140,13 @@ const Tree = React.createClass({
             )
         );
         //listeners - onClick, onEnter -> select | onDoubleClick -> collapse |
-    },
-    getNodeById: function(id) {
+    }
+
+    getNodeById(id) {
         return this.state.treeData.find((data) => id === data.id);
-    },
-    getParentList: function(aNode) {
+    }
+
+    getParentList(aNode) {
         const that = this;
         const parentList = [];
         let parent;
@@ -164,17 +164,13 @@ const Tree = React.createClass({
         }
 
         return parentList;
-    },
-    getChildren: function(aNode) {
-        return this.state.treeData.filter((data) => data.parentId === aNode.id);
-    },
-    expand: function() {},
-    expandAll: function() {},
-    collapse: function() { //collapse childre & -> if expanded
+    }
 
-    },
-    collapseAll: function() {},
-    toggle: function(aNode) {
+    getChildren(aNode) {
+        return this.state.treeData.filter((data) => data.parentId === aNode.id);
+    }
+
+    toggle(aNode) {//TODO fix
         this.setState({
             treeData: this.state.treeData.map((data) => {
                 if (aNode.id === data.id) {
@@ -183,8 +179,9 @@ const Tree = React.createClass({
                 return data;
             })
         });
-    },
-    updateParent: function(aNode, parentId) {
+    }
+
+    updateParent(aNode, parentId) {
         this.setState({
             treeData: this.state.treeData.map((data) => {
                 if (aNode.id === data.id) {
@@ -193,12 +190,25 @@ const Tree = React.createClass({
                 return data;
             })
         });
-    },
-    toggleAll: function() {},
-    insertNode: function() {},
-    selectNode: function() {},
-    removeNode: function() {}
-});
+    }
+}
 
+Tree.defaultProps = {
+    columns: ['indent', 'icon', 'label', 'spacer'],
+    indentSize: 16
+}
 
-return Tree;
+// const Tree = React.createClass({
+//
+//     expand: function() {},
+//     expandAll: function() {},
+//     collapse: function() { //collapse children & -> if expanded
+//     },
+//     collapseAll: function() {},
+//     toggleAll: function() {},
+//     insertNode: function() {},
+//     selectNode: function() {},
+//     removeNode: function() {}
+// });
+
+export default Tree;
