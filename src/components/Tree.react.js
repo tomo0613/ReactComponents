@@ -85,7 +85,9 @@ class Tree extends React.Component {
                 draggable: this.props.dranAndDrop || false,
                 onClick: (e) => {
                     e.stopPropagation();
-                    if (e.target.classList.contains('expandButton')) {
+                    const icon = e.target.nodeName === 'svg' ? e.target : e.target.parentNode;
+
+                    if (icon.classList.contains('expandButton')) {
                         this.toggle(aNode);
                     }
                 },
@@ -100,14 +102,13 @@ class Tree extends React.Component {
                     e.dataTransfer.setData('draggedNodeId', aNode.id);
                 },
                 onDragOver: (e) => {
-                    //TODO placeholder
+                    //TODO placeholder / not container;
+                    e.stopPropagation();
                     const draggedNodeId = e.dataTransfer.getData('draggedNodeId');
-                    //TODO if not child of itself
-                    // const draggedData = e.dataTransfer.getData('item');
-                    const parentIds = aParentList.map((node) => node.parentId); //TODO target
-                    parentIds.indexOf(aNode.id);
+                    const dropTarget = this.getNodeById(e.currentTarget.id)
+                    const targetParentIds = this.getParentList(dropTarget).map((node) => node.id);
 
-                    if (e.target.parentNode.classList.contains('treeRow')) {
+                    if ([dropTarget.id].concat(targetParentIds).indexOf(draggedNodeId) === -1) {
                         e.preventDefault();
                     }
                 },
@@ -135,11 +136,9 @@ class Tree extends React.Component {
             ),
             aChildren && React.DOM.div(
                 {className: 'treeChildren'},
-                // aNode.children.map((child) => this.createTreeNode(child))
                 aChildren.map((child) => this.createTreeNode(child))
             )
         );
-        //listeners - onClick, onEnter -> select | onDoubleClick -> collapse |
     }
 
     getNodeById(id) {
@@ -170,7 +169,7 @@ class Tree extends React.Component {
         return this.state.treeData.filter((data) => data.parentId === aNode.id);
     }
 
-    toggle(aNode) {//TODO fix
+    toggle(aNode) {
         this.setState({
             treeData: this.state.treeData.map((data) => {
                 if (aNode.id === data.id) {
@@ -210,5 +209,6 @@ Tree.defaultProps = {
 //     selectNode: function() {},
 //     removeNode: function() {}
 // });
+// keyboard navigation
 
 export default Tree;

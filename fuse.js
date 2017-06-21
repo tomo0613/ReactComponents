@@ -23,7 +23,9 @@ const app = fuse.bundle('bundle').instructions('>index.js');
 
 if (dev) {
     fuse.dev();
-    app.watch().hmr();
+    app.sourceMaps({ project: true, vendor: true })//TODO
+        .watch()
+        .hmr();
 }
 
 fuse.run();

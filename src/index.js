@@ -62,7 +62,7 @@ class MainElement extends React.Component {
     render()  {
         return React.DOM.div(
             {className: 'containerDiv'},
-            React.createElement(Tree, {data: treeData})
+            React.createElement(Tree, {data: treeData, dranAndDrop: true})
         );
     }
 }
