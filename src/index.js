@@ -33,10 +33,12 @@ const treeData = [
            children: [
                {
                    id: 21,
-                   label: 'label_2.1'
+                   label: 'label_2.1',
+                   order: 3
                }, {
                    id: 22,
                    label: 'label_2.2',
+                   order: 1,
                    children: [
                        {
                            id: 221,
@@ -48,7 +50,8 @@ const treeData = [
                    ]
                }, {
                    id: 23,
-                   label: 'label_2.3'
+                   label: 'label_2.3',
+                   order: 2
                }
            ]
        },

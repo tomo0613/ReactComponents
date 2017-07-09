@@ -1,4 +1,5 @@
 import React from 'react';
+import TreeNode from 'TreeNode.react';
 import Icon from 'Icon.react';
 
 class Tree extends React.Component {
@@ -18,10 +19,11 @@ class Tree extends React.Component {
         if (!this.state.treeData.length) {
             return null;
         }
-        // console.log('///////////////  RENDER  //////////////////', this.state.treeData);
+        const topLevelNodes = this.state.treeData.filter((node) => !node.parentId);
+
         return React.DOM.div({
             className: 'reactTree'
-        }, this.state.treeData.filter((node) => !node.parentId).map((node) => this.createTreeNode(node)));
+        }, topLevelNodes.sort((a, b) => a.order - b.order).map((node) => this.createTreeNode(node)));
     }
 
     initTreeData() {
@@ -37,7 +39,8 @@ class Tree extends React.Component {
                     id: parent ? parent.id + '/' + index : '' + index,
                     parentId: parent ? parent.id : null,
                     label: nodeData.label,
-                    container: container
+                    container: container,
+                    order: nodeData.order || index
                 };
 
                 treeData.push(treeNode);
@@ -102,32 +105,38 @@ class Tree extends React.Component {
                     e.dataTransfer.setData('draggedNodeId', aNode.id);
                 },
                 onDragOver: (e) => {
-                    //TODO placeholder / not container;
                     e.stopPropagation();
+
                     const draggedNodeId = e.dataTransfer.getData('draggedNodeId');
                     const dropTarget = this.getNodeById(e.currentTarget.id)
-                    const targetParentIds = this.getParentList(dropTarget).map((node) => node.id);
 
-                    if ([dropTarget.id].concat(targetParentIds).indexOf(draggedNodeId) === -1) {
+                    if (this.validDropTarget(dropTarget, draggedNodeId)) {
+                        const className = 'highlight_' + this.placementByCursorPos(e);;
+                        this.setHighlightClass(e.currentTarget, className);
                         e.preventDefault();
                     }
+                },
+                onDragLeave: (e) => {
+                    e.stopPropagation();
+                    this.setHighlightClass(e.currentTarget, null);
                 },
                 onDrop: (e) => {
                     e.stopPropagation();
                     const droppedNode = this.getNodeById(e.dataTransfer.getData('draggedNodeId'));
                     const dropTarget = this.getNodeById(e.currentTarget.id);
+                    const placement = this.placementByCursorPos(e);
+                    const newPosition = {};
 
-                    //TODO sort;
-
-                    if (dropTarget.container) {
-                        this.updateParent(droppedNode, dropTarget.id);
+                    if (dropTarget.container && placement === 'inside') {
+                        newPosition.parentId = dropTarget.id;
+                        newPosition.after = Infinity;
                     } else {
-                        this.updateParent(droppedNode, dropTarget.parentId);
+                        newPosition.parentId = dropTarget.parentId;
+                        newPosition[placement] = dropTarget.order;
                     }
-                },
-                onDragEnd: (e) => {
-                    console.log('dragEnd');
-                    //TODO remove original
+
+                    this.changeNodePosition(droppedNode, newPosition);
+                    this.setHighlightClass(e.currentTarget, null);
                 }
             },
             React.DOM.div(
@@ -136,7 +145,7 @@ class Tree extends React.Component {
             ),
             aChildren && React.DOM.div(
                 {className: 'treeChildren'},
-                aChildren.map((child) => this.createTreeNode(child))
+                aChildren.sort((a, b) => a.order - b.order).map((child) => this.createTreeNode(child))
             )
         );
     }
@@ -180,15 +189,67 @@ class Tree extends React.Component {
         });
     }
 
-    updateParent(aNode, parentId) {
-        this.setState({
-            treeData: this.state.treeData.map((data) => {
+    changeNodePosition(aNode, newPosition) {
+        const newTreeData = this.state.treeData.map((data) => {
+            if (newPosition.parentId && aNode.id === data.id) {
+                data.parentId = newPosition.parentId;
+            }
+
+            if (newPosition.after === Infinity && aNode.id === data.id) {
+                data.order = this.state.treeData.filter((el) => el.parentId === newPosition.parentId).length;
+            } else if (typeof newPosition.after === 'number') {
                 if (aNode.id === data.id) {
-                    data.parentId = parentId;
+                    data.order = newPosition.after + 1;
                 }
-                return data;
-            })
+                if (aNode.parentId === data.parentId) {
+                    data.order = data.order > newPosition.after ? data.order + 1 : data.order;
+                }
+            } else if (typeof newPosition.before === 'number') {
+                if (aNode.id === data.id) {
+                    data.order = newPosition.before;
+                }
+                if (aNode.parentId === data.parentId && aNode.id !== data.id) {
+                    data.order = data.order >= newPosition.before ? data.order + 1 : data.order;
+                }
+            }
+
+            return data;
         });
+
+        this.setState({
+            treeData: newTreeData
+        });
+    }
+
+    validDropTarget(dropTarget, draggedNodeId) {
+        const targetParentIds = this.getParentList(dropTarget).map((node) => node.id);
+
+        return [dropTarget.id].concat(targetParentIds).indexOf(draggedNodeId) === -1;
+    }
+
+    placementByCursorPos(e) {
+        const targetRect = e.currentTarget.getBoundingClientRect();
+        const container = this.getNodeById(e.currentTarget.id).container;
+
+        if (e.clientY < targetRect.top + targetRect.height / 3) {
+            return 'before';
+        } else if (container && e.clientY < targetRect.top + targetRect.height / 3 * 2) {
+            return 'inside';
+        } else {
+            return 'after';
+        }
+    }
+
+    setHighlightClass(aTarget, aClassName) {
+        const classList = aTarget.classList;
+
+        ['highlight_before', 'highlight_inside', 'highlight_after'].forEach((className) => {
+            classList.remove(className);
+        })
+
+        if (aClassName) {
+            classList.add(aClassName);
+        }
     }
 }
 

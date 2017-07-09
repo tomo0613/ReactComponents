@@ -10,3 +10,17 @@ body {
 .expandButton {
     cursor: pointer;
 }
+
+.highlight_before {
+    box-sizing: border-box;
+    border-left: 1px solid rgba(127, 227, 61, 0.5);
+    border-top: 3px solid rgba(127, 227, 61, 0.5);
+}
+.highlight_inside {
+    background: rgba(127, 227, 61, 0.5);
+}
+.highlight_after {
+    box-sizing: border-box;
+    border-left: 1px solid rgba(127, 227, 61, 0.5);
+    border-bottom: 3px solid rgba(127, 227, 61, 0.5);
+}
